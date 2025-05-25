@@ -9,7 +9,7 @@ function initializeCityProvinceMapping() {
     }
 
     // キャッシュが存在しない場合はcsvファイルから都市と省のデータを読み込む
-    fetch('/public/china_cities.csv')
+    fetch('./public/china_cities.csv')
         .then(response => response.text())
         .then(csvText => {
             const cityProvinceLocationMapping = {};
@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
 
                     // 省の色塗り
-                    fetch('/public/china-province.geojson')
+                    fetch('./public/china-province.geojson')
                         .then(res => res.json())
                         .then(geojson => {
                             L.geoJSON(geojson, {
@@ -355,7 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 世界ボタンをクリックした際に色を付ける処理
 function renderWorldMode(map, visitedCountryNames) {
-    fetch('/world-110m.geojson')
+    fetch('./world-110m.geojson')
     .then(res => res.json())
     .then(geojson => {
         L.geoJSON(geojson, {
