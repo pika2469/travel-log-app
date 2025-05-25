@@ -1,35 +1,3 @@
-import '../style.css';
-
-// // 都市と省のキャッシュを初期化
-// function initializeCityProvinceMapping() {
-//   if (localStorage.getItem("cityProvinceMapping")){
-//     console.log("キャッシュはすでに存在しています");
-//     return;
-//   }
-
-//   fetch('../public/china_cities.csv')
-//     .then(response => response.text())
-//     .then(data => {
-//       const cityProvinceMapping = {};
-//       const rows = data.split("\n");
-
-//       // ヘッダ行はスキップ
-//       rows.slice(1).forEach(row => {
-//         const [place, lat, lon, city_en, province_en, city_zh, province_zh] = row.split(",");
-//         if (city_zh && province_zh && city_zh !== 'city_zh') {
-//           cityProvinceMapping[city_zh.trim()] = province_zh.trim();
-//         }
-//       });
-//       localStorage.setItem("cityProvinceMapping", JSON.stringify(cityProvinceMapping));
-//       console.log("都市と省のキャッシュを初期化しました");
-//       console.log(cityProvinceMapping);
-//     })
-//     .catch(error => console.error("csvの読み込みに失敗しました:", error));
-// }
-
-// // 初期化実行
-// initializeCityProvinceMapping();
-
 // DOM読込後に実行
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("travel-form");
