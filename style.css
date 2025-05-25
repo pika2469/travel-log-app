@@ -151,3 +151,18 @@ input, textarea {
   height: 600px;
   margin-top: 1rem;
 }
+
+.nav-link {
+  font-size: 1.1rem;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  background-color: #4a90e2;
+  color: white;
+  border-radius: 6px;
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+.nav-link:hover {
+  background-color: #3366cc;
+}

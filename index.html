@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="ja">
     <head>
@@ -36,6 +35,11 @@
     </head>
 
     <body>
+        <!-- 記録登録ページ -->
+         <div style="text-align: center, margin-top: 1rem;">
+            <a href="register.html" class="nav-link">記録を追加</a>
+         </div>
+
         <h1>旅行マップ</h1>
 
         <!-- 表示モード切替ボタン -->
@@ -50,56 +54,3 @@
 
         <script type="module" src="./src/index.js"></script>
     </body>
-=======
-<!DOCTYPE html>
-<html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <title>地図表示</title>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-        <link rel="stylesheet" href="./style.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <!-- CSS -->
-        <style>
-            #map {
-                width: 100%;
-                height: 600px;
-                margin-top: 1rem;
-            }
-            .mode-buttons {
-                display: flex;
-                justify-content: center;
-                gap: 1rem;
-                margin-top: 1rem;
-            }
-            .mode-buttons button{
-                padding: 0.5rem 1rem;
-                font-size: 1rem;
-                cursor: pointer;
-            }
-            .mode-buttons button.active{
-                background-color: #4a90e2;
-                color: white;
-                font-weight: bold;
-                border: 2px solid #2c6cb9;
-            }
-        </style>
-    </head>
-
-    <body>
-        <h1>旅行マップ</h1>
-
-        <!-- 表示モード切替ボタン -->
-        <div class="mode-buttons">
-            <button data-mode="world">世界</button>
-            <button data-mode="china">中国</button>
-            <button data-mode="japan">日本</button>
-        </div>
-
-        <!-- 地図表示 -->
-        <div id="map"></div>
-
-        <script src="./src/index.js"></script>
-    </body>
->>>>>>> 498a1638bfd3e8a6e79367321ebb76896744ece2
-</html>
