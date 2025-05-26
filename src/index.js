@@ -406,7 +406,7 @@ function getVisitedCountryCodesFromStorage() {
 
     logs.forEach(log => {
         if (log.country) {
-            countries.add(log.country.toUpperCase());
+            codes.add(log.country.toUpperCase());
         }
     });
 
