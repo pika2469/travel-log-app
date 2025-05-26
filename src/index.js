@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
                 // 世界表示
                 case 'world':
-                    map.setView([20, 0], 2);
+                    map.setView([36.2048, 138.2529], 2);
                     resetMap(map);
 
                     // 地図の色塗り（キャッシュを使用）
