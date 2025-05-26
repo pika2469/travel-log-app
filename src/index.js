@@ -170,8 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     resetMap(map);
 
                     // 地図の色塗り（キャッシュを使用）
-                    const visitedCountries = getVisitedCountryNamesFromStorage();
-                    renderWorldMode(map, visitedCountries);
+                    const visitedCountryCodes = getVisitedCountryCodesFromStorage();
+                    renderWorldMode(map, visitedCountryCodes);
                     break;
                 
                 // 中国表示
@@ -350,17 +350,17 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 // 世界ボタンをクリックした際に色を付ける処理
-function renderWorldMode(map, visitedCountryNames) {
+function renderWorldMode(map, visitedCountryCodes) {
     fetch('./world-110m.geojson')
     .then(res => res.json())
     .then(geojson => {
         L.geoJSON(geojson, {
             style: feature => {
 
-                // geojsonデータの国名プロパティを取得
-                const countryName = feature.properties.name;
+                // geojsonデータの3桁国名コードを取得
+                const countryCode = feature.id?.toUpperCase(); // 例: "CHN"
 
-                if(visitedCountryNames.includes(countryName)) {
+                if(visitedCountryCodes.includes(countryCode)) {
                     return {
                         fillColor: '#4a90e2',
                         color: '#3366cc',
@@ -377,12 +377,20 @@ function renderWorldMode(map, visitedCountryNames) {
                 }
             },
             onEachFeature: (feature, layer) => {
-                layer.on('click', (e) => {
-                    const countryName = feature.properties.name;
-                    const logs = JSON.parse(localStorage.getItem("travelLogs") || "[]");
-                    const matchingLogs = logs.filter(log => log.country === countryName);
-                    createInfoPanel(e.originalEvent, matchingLogs);
-                });
+
+                // ログがある国のみ、クリック時に詳細ウィンドウを追加
+                const logs = JSON.parse(localStorage.getItem("travelLogs") || "[]");
+                const featureCode = feature.id?.toUpperCase(); // geoJSONファイルからid = 3桁コード取得
+
+                // ログの3桁コードとgeoJSONファイルの3桁コードが一致するログのみ抽出
+                const matchingLogs = logs.filter(log => log.country === featureCode);
+
+                if (matchingLogs.length > 0) {
+                    // 該当する国にクリックイベントを追加
+                    layer.on('click', (e) => {
+                        createInfoPanel(e.originalEvent, matchingLogs);
+                    });
+                }
             }
         }).addTo(map)
     })
@@ -391,16 +399,16 @@ function renderWorldMode(map, visitedCountryNames) {
     });
 }
 
-// localStorangeデータに保存されたcountryから重複のない配列を返す関数
-function getVisitedCountryNamesFromStorage() {
+// localStorangeデータに保存されたcountry codeから重複のない配列を返す関数
+function getVisitedCountryCodesFromStorage() {
     const logs = JSON.parse(localStorage.getItem("travelLogs") || "[]");
-    const countries = new Set();
+    const codes = new Set();
 
     logs.forEach(log => {
         if (log.country) {
-            countries.add(log.country);
+            countries.add(log.country.toUpperCase());
         }
     });
 
-    return Array.from(countries);
+    return Array.from(codes);
 }
