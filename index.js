@@ -60,77 +60,77 @@ function resetMap(map) {
 }
 
 // クリックした地域の詳細記録をパネルに表示する関数
-    function createInfoPanel(event, logs) {
-        let popup = document.getElementById('info-popup');
-        
-        // 既存のポップアップを削除
-        if (popup) popup.remove();
-        
-        // 記録が1件もない場合はポップアップを生成しない
-        if (logs.length === 0) return;
+function createInfoPanel(event, logs) {
+    let popup = document.getElementById('info-popup');
 
-        popup = document.createElement('div');
-        popup.id = 'info-popup';
-        popup.style.position = 'absolute';
-        popup.style.backgroundColor = 'rgba(0,0,0,0.85)';
-        popup.style.border = '1px solid #444';
-        popup.style.color = 'white';
-        popup.style.borderRadius = '8px';
-        popup.style.padding = '10px';
-        popup.style.MaxWidth = '90%';
-        popup.style.maxHeight = '300px';
-        popup.style.overflowY = 'auto';
-        // popup.style.whiteSpace = 'nowrap';
-        popup.style.display = 'flex';
-        popup.style.flexDirection = 'column';
-        popup.style.gap = '10px';
-        // popup.style.overflowY = 'auto';
-        popup.style.zIndex = 1000;
-        document.body.appendChild(popup);
+    // 既存のポップアップを削除
+    if (popup) popup.remove();
 
-        const {x, y} = event;
-        popup.style.left = `${x}px`;
-        popup.style.top = `${y}px`;
+    // 記録が1件もない場合はポップアップを生成しない
+    if (logs.length === 0) return;
 
-        logs.forEach(log => {
-            const card = document.createElement('div');
-            card.className = 'log-card';
-            card.style.backgorundColor = '#4a90e2';
-            card.style.color = 'black';
-            card.style.padding = '10px';
-            card.style.borderRadius = '6px';
+    popup = document.createElement('div');
+    popup.id = 'info-popup';
+    popup.style.position = 'absolute';
+    popup.style.backgroundColor = 'rgba(0,0,0,0.85)';
+    popup.style.border = '1px solid #444';
+    popup.style.color = 'white';
+    popup.style.borderRadius = '8px';
+    popup.style.padding = '10px';
+    popup.style.MaxWidth = '90%';
+    popup.style.maxHeight = '300px';
+    popup.style.overflowY = 'auto';
+    // popup.style.whiteSpace = 'nowrap';
+    popup.style.display = 'flex';
+    popup.style.flexDirection = 'column';
+    popup.style.gap = '10px';
+    // popup.style.overflowY = 'auto';
+    popup.style.zIndex = 1000;
+    document.body.appendChild(popup);
 
-            const contentRow = document.createElement('div');
-            contentRow.style.display = 'flex';
-            contentRow.style.gap = '10px';
-            contentRow.style.alignItems = 'center';
+    const {x, y} = event;
+    popup.style.left = `${x}px`;
+    popup.style.top = `${y}px`;
 
-            // const titleSpan = document.createElement('span');
-            // titleSpan.innerHTML = `<strong>${log.title}</strong>`;
+    logs.forEach(log => {
+    const card = document.createElement('div');
+    card.className = 'log-card';
+    card.style.backgorundColor = '#4a90e2';
+    card.style.color = 'black';
+    card.style.padding = '10px';
+    card.style.borderRadius = '6px';
 
-            const dateSpan = document.createElement('span');
-            dateSpan.textContent = log.date;
+    const contentRow = document.createElement('div');
+    contentRow.style.display = 'flex';
+    contentRow.style.gap = '10px';
+    contentRow.style.alignItems = 'center';
 
-            const citySpan = document.createElement('span');
-            citySpan.textContent = log.location.split('、')[0];
+    // const titleSpan = document.createElement('span');
+    // titleSpan.innerHTML = `<strong>${log.title}</strong>`;
 
-            // contentRow.appendChild(titleSpan);
-            contentRow.appendChild(dateSpan);
-            contentRow.appendChild(citySpan);
-            card.appendChild(contentRow);
-            popup.appendChild(card);
-        })
+    const dateSpan = document.createElement('span');
+    dateSpan.textContent = log.date;
 
-        // 他クリックでパネル非表示
-        setTimeout(() => {
-            document.addEventListener('click', function handler(evt) {
-                if (!popup.contains(evt.target)) {
-                    popup.remove();
-                    document.removeEventListener('click', handler);
-                }
-            })
-        }, 10);
-    }
+    const citySpan = document.createElement('span');
+    citySpan.textContent = log.location.split('、')[0];
+
+    // contentRow.appendChild(titleSpan);
+    contentRow.appendChild(dateSpan);
+    contentRow.appendChild(citySpan);
+    card.appendChild(contentRow);
+    popup.appendChild(card);
+    })
+
+    // 他クリックでパネル非表示
+    setTimeout(() => {
+    document.addEventListener('click', function handler(evt) {
+        if (!popup.contains(evt.target)) {
+            popup.remove();
+            document.removeEventListener('click', handler);
+        }
+    })
+    }, 10);
+}
 
 // 初期化処理
 initializeCityProvinceMapping();
@@ -342,9 +342,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // すべてのピンの描画が完了したらズームを行う
+        // すべてのピンの描画が完了したら世界地図全体が表示されるようにスケール調整
         if (bounds.isValid()) {
-            map.fitBounds(bounds.pad(0.3));
+            // map.fitBounds(bounds.pad(0.3));
+            map.setView([20, 0], 2);
         }
     });
 
@@ -352,7 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 世界ボタンをクリックした際に色を付ける処理
 function renderWorldMode(map, visitedCountryNames) {
-    fetch('./world-110m.geojson')
+    fetch('./public/world-110m.geojson')
     .then(res => res.json())
     .then(geojson => {
         L.geoJSON(geojson, {
