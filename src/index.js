@@ -46,11 +46,9 @@ function initializeCityProvinceMapping() {
 // 地図をリセットする関数
 function resetMap(map) {
     
-    // 現在のタイルレイヤーを削除
+    // 現在のすべてのレイヤーを削除
     map.eachLayer(layer => {
-        if (layer instanceof L.TileLayer || layer instanceof L.GeoJSON) {
-            map.removeLayer(layer);
-        }
+        map.removeLayer(layer);
     });
 
     // 白地図レイヤーを追加
