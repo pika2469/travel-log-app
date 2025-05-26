@@ -6,7 +6,7 @@ function initializeCityProvinceMapping() {
     }
 
     // キャッシュが存在しない場合はcsvファイルから都市と省のデータを読み込む
-    fetch('./public/china_cities.csv')
+    fetch('./china_cities.csv')
         .then(response => response.text())
         .then(csvText => {
             const cityProvinceLocationMapping = {};
@@ -139,8 +139,7 @@ initializeCityProvinceMapping();
 document.addEventListener("DOMContentLoaded", () => {
 
     // 地図の初期表示（世界全体)
-    const map = L.map('map').setView([35.8617, 104.1954], 4);
-
+    const map = L.map('map').setView([20, 0], 2);
     resetMap(map);
 
     // info panel
@@ -217,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
 
                     // 省の色塗り
-                    fetch('./public/china-province.geojson')
+                    fetch('./china-province.geojson')
                         .then(res => res.json())
                         .then(geojson => {
                             L.geoJSON(geojson, {
@@ -342,18 +341,18 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // すべてのピンの描画が完了したら世界地図全体が表示されるようにスケール調整
-        if (bounds.isValid()) {
-            // map.fitBounds(bounds.pad(0.3));
-            map.setView([20, 0], 2);
-        }
+        // // すべてのピンの描画が完了したら世界地図全体が表示されるようにスケール調整
+        // if (bounds.isValid()) {
+        //     // map.fitBounds(bounds.pad(0.3));
+        //     map.setView([20, 0], 2);
+        // }
     });
 
 })
 
 // 世界ボタンをクリックした際に色を付ける処理
 function renderWorldMode(map, visitedCountryNames) {
-    fetch('./public/world-110m.geojson')
+    fetch('./world-110m.geojson')
     .then(res => res.json())
     .then(geojson => {
         L.geoJSON(geojson, {
