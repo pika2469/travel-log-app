@@ -138,8 +138,8 @@ initializeCityProvinceMapping();
 // DOM読込後に実行
 document.addEventListener("DOMContentLoaded", () => {
 
-    // 地図の初期表示（世界全体)
-    const map = L.map('map').setView([20, 0], 2);
+    // 地図の初期表示（日本中心で世界地図全体を表示)
+    const map = L.map('map').setView([36.2048, 138.2529], 2);
     resetMap(map);
 
     // info panel
@@ -150,9 +150,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // 表示モード切替
     const modeButtons = document.querySelectorAll('.mode-buttons button');
 
+    // 表示モードを認識するための変数
+    let currentMode = "";
+
     modeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const mode = btn.dataset.mode;
+            currentMode = mode;
 
             // すべてのボタンからactiveクラスを削除
             modeButtons.forEach(b => b.classList.remove('active'));
@@ -322,26 +326,29 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // すべての処理が完了した後にマーカーを描画
+    
     Promise.all(fetchPromises).then(results => {
-        results.forEach(result => {
-            if (result){
-                const {lat, lon, log} = result;
+        
+        // 世界モードの場合はピンを表示しない
+        if (currentMode !== "world") {
+            results.forEach(result => {
+                if (result){
+                    const {lat, lon, log} = result;
 
-                // マーカー追加
-                L.circleMarker([lat, lon], {
-                    radius: 5,
-                    color: '#3366cc',
-                    fillColor: '#4a90e2',
-                    fillOpacity: 0.8
-                }).addTo(map);
-                // }).addTo(map).bindPopup(`<strong>${log.title}</strong><br>${log.date}`);
+                    // マーカー追加
+                    L.circleMarker([lat, lon], {
+                        radius: 5,
+                        color: '#3366cc',
+                        fillColor: '#4a90e2',
+                        fillOpacity: 0.8
+                    }).addTo(map);
 
-                // 表示範囲に含める
-                bounds.extend([lat, lon]);
-            }
-        });
+                    // 表示範囲に含める
+                    bounds.extend([lat, lon]);
+                }
+            });
+        }        
     });
-
 })
 
 // 世界ボタンをクリックした際に色を付ける処理
