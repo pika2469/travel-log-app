@@ -6,7 +6,7 @@ function initializeCityProvinceMapping() {
     }
 
     // キャッシュが存在しない場合はcsvファイルから都市と省のデータを読み込む
-    fetch('./public/china_cities.csv')
+    fetch('./china_cities.csv')
         .then(response => response.text())
         .then(csvText => {
             const cityProvinceLocationMapping = {};
@@ -60,77 +60,77 @@ function resetMap(map) {
 }
 
 // クリックした地域の詳細記録をパネルに表示する関数
-    function createInfoPanel(event, logs) {
-        let popup = document.getElementById('info-popup');
-        
-        // 既存のポップアップを削除
-        if (popup) popup.remove();
-        
-        // 記録が1件もない場合はポップアップを生成しない
-        if (logs.length === 0) return;
+function createInfoPanel(event, logs) {
+    let popup = document.getElementById('info-popup');
 
-        popup = document.createElement('div');
-        popup.id = 'info-popup';
-        popup.style.position = 'absolute';
-        popup.style.backgroundColor = 'rgba(0,0,0,0.85)';
-        popup.style.border = '1px solid #444';
-        popup.style.color = 'white';
-        popup.style.borderRadius = '8px';
-        popup.style.padding = '10px';
-        popup.style.MaxWidth = '90%';
-        popup.style.maxHeight = '300px';
-        popup.style.overflowY = 'auto';
-        // popup.style.whiteSpace = 'nowrap';
-        popup.style.display = 'flex';
-        popup.style.flexDirection = 'column';
-        popup.style.gap = '10px';
-        // popup.style.overflowY = 'auto';
-        popup.style.zIndex = 1000;
-        document.body.appendChild(popup);
+    // 既存のポップアップを削除
+    if (popup) popup.remove();
 
-        const {x, y} = event;
-        popup.style.left = `${x}px`;
-        popup.style.top = `${y}px`;
+    // 記録が1件もない場合はポップアップを生成しない
+    if (logs.length === 0) return;
 
-        logs.forEach(log => {
-            const card = document.createElement('div');
-            card.className = 'log-card';
-            card.style.backgorundColor = '#4a90e2';
-            card.style.color = 'black';
-            card.style.padding = '10px';
-            card.style.borderRadius = '6px';
+    popup = document.createElement('div');
+    popup.id = 'info-popup';
+    popup.style.position = 'absolute';
+    popup.style.backgroundColor = 'rgba(0,0,0,0.85)';
+    popup.style.border = '1px solid #444';
+    popup.style.color = 'white';
+    popup.style.borderRadius = '8px';
+    popup.style.padding = '10px';
+    popup.style.MaxWidth = '90%';
+    popup.style.maxHeight = '300px';
+    popup.style.overflowY = 'auto';
+    // popup.style.whiteSpace = 'nowrap';
+    popup.style.display = 'flex';
+    popup.style.flexDirection = 'column';
+    popup.style.gap = '10px';
+    // popup.style.overflowY = 'auto';
+    popup.style.zIndex = 1000;
+    document.body.appendChild(popup);
 
-            const contentRow = document.createElement('div');
-            contentRow.style.display = 'flex';
-            contentRow.style.gap = '10px';
-            contentRow.style.alignItems = 'center';
+    const {x, y} = event;
+    popup.style.left = `${x}px`;
+    popup.style.top = `${y}px`;
 
-            // const titleSpan = document.createElement('span');
-            // titleSpan.innerHTML = `<strong>${log.title}</strong>`;
+    logs.forEach(log => {
+    const card = document.createElement('div');
+    card.className = 'log-card';
+    card.style.backgorundColor = '#4a90e2';
+    card.style.color = 'black';
+    card.style.padding = '10px';
+    card.style.borderRadius = '6px';
 
-            const dateSpan = document.createElement('span');
-            dateSpan.textContent = log.date;
+    const contentRow = document.createElement('div');
+    contentRow.style.display = 'flex';
+    contentRow.style.gap = '10px';
+    contentRow.style.alignItems = 'center';
 
-            const citySpan = document.createElement('span');
-            citySpan.textContent = log.location.split('、')[0];
+    // const titleSpan = document.createElement('span');
+    // titleSpan.innerHTML = `<strong>${log.title}</strong>`;
 
-            // contentRow.appendChild(titleSpan);
-            contentRow.appendChild(dateSpan);
-            contentRow.appendChild(citySpan);
-            card.appendChild(contentRow);
-            popup.appendChild(card);
-        })
+    const dateSpan = document.createElement('span');
+    dateSpan.textContent = log.date;
 
-        // 他クリックでパネル非表示
-        setTimeout(() => {
-            document.addEventListener('click', function handler(evt) {
-                if (!popup.contains(evt.target)) {
-                    popup.remove();
-                    document.removeEventListener('click', handler);
-                }
-            })
-        }, 10);
-    }
+    const citySpan = document.createElement('span');
+    citySpan.textContent = log.location.split('、')[0];
+
+    // contentRow.appendChild(titleSpan);
+    contentRow.appendChild(dateSpan);
+    contentRow.appendChild(citySpan);
+    card.appendChild(contentRow);
+    popup.appendChild(card);
+    })
+
+    // 他クリックでパネル非表示
+    setTimeout(() => {
+    document.addEventListener('click', function handler(evt) {
+        if (!popup.contains(evt.target)) {
+            popup.remove();
+            document.removeEventListener('click', handler);
+        }
+    })
+    }, 10);
+}
 
 // 初期化処理
 initializeCityProvinceMapping();
@@ -139,8 +139,7 @@ initializeCityProvinceMapping();
 document.addEventListener("DOMContentLoaded", () => {
 
     // 地図の初期表示（世界全体)
-    const map = L.map('map').setView([35.8617, 104.1954], 4);
-
+    const map = L.map('map').setView([20, 0], 2);
     resetMap(map);
 
     // info panel
@@ -217,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
 
                     // 省の色塗り
-                    fetch('./public/china-province.geojson')
+                    fetch('./china-province.geojson')
                         .then(res => res.json())
                         .then(geojson => {
                             L.geoJSON(geojson, {
@@ -341,11 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 bounds.extend([lat, lon]);
             }
         });
-
-        // すべてのピンの描画が完了したらズームを行う
-        if (bounds.isValid()) {
-            map.fitBounds(bounds.pad(0.3));
-        }
     });
 
 })
@@ -405,95 +399,3 @@ function getVisitedCountryNamesFromStorage() {
 
     return Array.from(countries);
 }
-
-// // 中国の省を色塗りする関数
-// function renderChinaMode(map, visitedProvinces) {
-//     fetch('/china-province.geojson')
-//     .then(res => res.json()) // レスポンスを.json()メソッドで解析しオブジェクトとして扱う
-//     .then(geojson => { 
-
-//         L.geoJSON(geojson, { // GeoJSONデータをもとに地図上に描画
-//             style: feature => { // 省の見た目を決定する処理
-//                 const provinceName = feature.properties.name;
-
-//                 if (visitedProvinces.includes(provinceName)) {
-//                     return {
-//                         fillColor: '#4a90e2', // 青色
-//                         color: '#3366cc',
-//                         weight: 1,
-//                         fillOpacity: 0.6
-//                     };
-//                 } else {
-//                     return {
-//                         fillColor: '#e0e0e0', // グレー
-//                         color: '#cccccc',
-//                         weight: 0.5,
-//                         fillOpacity: 0.2,
-//                     };
-//                 }
-//             }
-//         }).addTo(map);
-//     })
-//     .catch(err => {
-//         console.error('中国地図の読み込みに失敗しました:', err);
-//     });
-// }
-
-// // 省の判定に使用する対応リスト
-// const provinceMapping = {
-//     "上海": "Shanghai Municipality",
-//     "北京": "Beijing Municipality",
-//     "天津": "Tianjin Municipality",
-//     "重慶": "Chongqing Municipality",
-//     "河北": "Hebei Province",
-//     "山西": "Shanxi Province",
-//     "内モンゴル": "Inner Mongolia Autonomous Region",
-//     "遼寧": "Liaoning Province",
-//     "吉林": "Jilin Province",
-//     "黒竜江": "Heilongjiang Province",
-//     "江蘇": "Jiangsu Province",
-//     "浙江": "Zhejiang Province",
-//     "安徽": "Anhui Province",
-//     "福建": "Fujian Province",
-//     "江西": "Jiangxi Province",
-//     "山東": "Shandong Province",
-//     "河南": "Henan Province",
-//     "湖北": "Hubei Province",
-//     "湖南": "Hunan Province",
-//     "広東": "Guangdong Province",
-//     "広西": "Guangxi Zhuang Autonomous Region",
-//     "海南": "Hainan Province",
-//     "四川": "Sichuan Province",
-//     "貴州": "Guizhou Province",
-//     "雲南": "Yunnan Province",
-//     "西蔵": "Tibet Autonomous Region",
-//     "陝西": "Shaanxi Province",
-//     "甘粛": "Gansu province",
-//     "青海": "Qinghai Province",
-//     "寧夏": "Ningxia Hui Autonomous Region",
-//     "新疆": "Xinjiang Uygur Autonomous Region",
-//     "香港": "Hong Kong Special Administrative Region",
-//     "澳門": "Macao Special Administrative Region",
-//     "台湾": "Taiwan Province"
-// };
-
-// // 中国の省リストをlocalStorageから取得する関数
-// function getVisitedProvincesFromStorage() {
-//     const logs = JSON.parse(localStorage.getItem("travelLogs") || "[]");
-//     const provinces = new Set();
-
-//     logs.forEach(log => {
-//         if (log.location.includes('中国')) {
-
-//             // ”省、中国”というスタイルで記録されている前提で、省を取得
-//             const province = log.location.split('、')[0];
-
-//             // 対応する英語名に変換して追加
-//             if (provinceMapping[province]) {
-//                 provinces.add(provinceMapping[province]);
-//             }
-//         }
-//     });
-
-//     return Array.from(provinces);
-// }
