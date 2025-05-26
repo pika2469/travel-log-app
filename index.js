@@ -340,12 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 bounds.extend([lat, lon]);
             }
         });
-
-        // // すべてのピンの描画が完了したら世界地図全体が表示されるようにスケール調整
-        // if (bounds.isValid()) {
-        //     // map.fitBounds(bounds.pad(0.3));
-        //     map.setView([20, 0], 2);
-        // }
     });
 
 })
