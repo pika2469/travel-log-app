@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(infoPanel);
 
     // 表示モード切替
-    const modeButtons = document.querySelectorAll('.mode-buttons button');
+    const modeButtons = document.querySelectorAll('[data-mode]');
 
     // 表示モードを認識するための変数
     let currentMode = "";
@@ -213,12 +213,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     // ピンを一括描画
                     pinQueue.forEach(({lat, lon, city, province_zh}) => {
                         L.circleMarker([lat, lon], {
-                            radius: 6,
-                            fillColor: '#4a90e2',
-                            color: '#3366cc',
+                            radius: 3,
+                            fillColor: '#0057b7',
+                            color: '#003f88',
                             weight: 1,
                             opacitiy: 1,
-                            fillOpacity: 0.6
+                            fillOpacity: 0.9
                         }).addTo(map).bindPopup(`<strong>${city}</strong><br>${province_zh}`);
                     });
 
@@ -235,8 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                     const provinceNameEn = feature.properties.name;
                                     return visitedProvinces.has(provinceNameEn)
                                         ? {
-                                            fillColor: '#4a90e2',
-                                            color: '#3366cc',
+                                            fillColor: '#a7d8ff',
+                                            color: '#5eaada',
                                             weight: 1,
                                             fillOpacity: 0.6
                                         }

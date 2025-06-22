@@ -4,56 +4,57 @@
         <meta charset="UTF-8">
         <title>地図表示</title>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+        <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script> -->
+        <script type="module" src="./src/index.js" defer></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <!-- CSS -->
-        <style>
-            #map {
-                width: 100%;
-                height: 600px;
-                margin-top: 1rem;
-            }
-            .mode-buttons {
-                display: flex;
-                justify-content: center;
-                gap: 1rem;
-                margin-top: 1rem;
-            }
-            .mode-buttons button{
-                padding: 0.5rem 1rem;
-                font-size: 1rem;
-                cursor: pointer;
-            }
-            .mode-buttons button.active{
-                background-color: #4a90e2;
-                color: white;
-                font-weight: bold;
-                border: 2px solid #2c6cb9;
-            }
-        </style>
     </head>
 
-    <body class="bg-gray-100">
-        <div class="bg-green-500 text-white p-4 rounded-lg text-center mt-4">
-            Tailwindが有効です!
-        </div>
+    <body class="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white relative font-sans"></body>    
 
-        <!-- 記録登録ページ -->
-         <div style="text-align: center; margin-top: 1rem;">
-            <a href="register.html" class="nav-link">記録を追加</a>
-         </div>
-
-        <h1>旅行マップ</h1>
+        <!-- ヘッダー -->
+        <!-- <header class="text-center py-4 text-xl font-bold tracking-wide">
+            🌎マップ
+        </header> -->
 
         <!-- 表示モード切替ボタン -->
-        <div class="mode-buttons">
-            <button data-mode="world">世界</button>
-            <button data-mode="china">中国</button>
-            <button data-mode="japan">日本</button>
+        <div class="flex justify-center gap-4 py-3">
+            <button 
+                data-mode="world"
+                class="flex items-center gap-2 bg-white/10 hover:bg-blue-600/30 backdrop-blur text-white rounded-xl px-5 py-2 text-sm shadow transition-all"
+            >
+                世界
+            </button>
+            <button 
+                data-mode="china"
+                class="flex items-center gap-2 bg-white/10 hover:bg-blue-600/30 backdrop-blur text-white rounded-xl px-5 py-2 text-sm shadow transition-all"
+            >
+                中国
+            </button>
+            <button 
+                data-mode="japan"
+                class="flex items-center gap-2 bg-white/10 hover:bg-blue-600/30 backdrop-blur text-white rounded-xl px-5 py-2 text-sm shadow transition-all"
+            >
+                日本
+            </button>
         </div>
 
-        <!-- 地図表示 -->
-        <div id="map"></div>
+        <!-- 地図エリア -->
+        <div class="relative px-4 pb-20">
+            <div id="map" class="w-full h-[600px] rounded-xl shadow-lg relative z-0"></div>
 
-        <script type="module" src="./src/index.js"></script>
+            <!-- フローティング追加ボタン -->
+            <div class="absolute bottom-[110px] right-6 z-10 flex flex-col items-center">
+                <a
+                    href="register.html"
+                    class="bg-blue-500 text-white p-4 rounded-full shadow-xl hover:bg-blue-600 transition z-10"
+                    aria-label="記録を追加"
+                >
+                    +
+                </a>
+                <p class="mt-l text-xs text-black drop-shadow-sm">記録を追加</p>
+            </div>
+           
+        </div>
+        
+       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
     </body>
