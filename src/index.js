@@ -1,3 +1,5 @@
+import './style.css';
+
 // 都市と省のキャッシュを自動化
 function initializeCityProvinceMapping() {
     if (localStorage.getItem('cityProvinceLocationMapping')) {
