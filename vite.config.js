@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import {resolve} from 'path';
 
 export default defineConfig({
-    base: './', // 相対パスで出力
+    // base: './', // 相対パスで出力
+    base: 'travel-log-app',
     build: {
         outDir: 'docs',
         // マルチページ対応
