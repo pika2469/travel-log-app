@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 import {resolve} from 'path';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
     // base: './', // 相対パスで出力
-    base: 'travel-log-app',
+    // base: 'travel-log-app',
+    base: command === 'build' ? 'travel-log-app' : '/',
     build: {
         outDir: 'docs',
         // マルチページ対応
@@ -19,4 +20,4 @@ export default defineConfig({
             leaflet: '/node_modules/leaflet/dist/leaflet.js',
         },
     },
-});
+}));
