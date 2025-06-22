@@ -1,3 +1,5 @@
+import './style.css';
+
 // DOM読込後に実行
 document.addEventListener("DOMContentLoaded", async () => {
   
