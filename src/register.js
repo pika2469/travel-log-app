@@ -115,7 +115,7 @@ let countryCodeMap = {};
 function loadCountryCodeMap() {
 
   const base = import.meta.env.BASE_URL;
-  return fetch(`${base}codes.json`)
+  return fetch(`${base}/codes.json`)
   .then(res => res.json())
   .then(data => {
     countryCodeMap = {};
