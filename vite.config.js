@@ -6,5 +6,8 @@ export default defineConfig({
             leaflet: '/node_modules/leaflet/dist/leaflet.js',
         },
     },
+    build: {
+        outDir: 'docs',
+    },
 
 });
