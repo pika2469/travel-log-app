@@ -99,7 +99,7 @@ function createInfoPanel(event, logs) {
     const card = document.createElement('div');
     card.className = 'log-card';
     card.style.backgorundColor = '#4a90e2';
-    card.style.color = 'black';
+    card.style.color = 'white';
     card.style.padding = '10px';
     card.style.borderRadius = '6px';
 
@@ -226,11 +226,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     const basePath = import.meta.env.BASE_URL.endsWith('/')
                     ? import.meta.env.BASE_URL
                     : import.meta.env.BASE_URL + '/';
+
                     fetch(`${basePath}china-province.geojson`)
-                    // fetch(`${import.meta.env.BASE_URL}/china-province.geojson`)
                         .then(res => res.json())
                         .then(geojson => {
-                            L.geoJSON(geojson, {
+                            // L.geoJSONレイヤー生成
+                            const chinaLayer = L.geoJSON(geojson, {
                                 style: feature => {
                                     const provinceNameEn = feature.properties.name;
                                     return visitedProvinces.has(provinceNameEn)
@@ -238,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                             fillColor: '#a7d8ff',
                                             color: '#5eaada',
                                             weight: 1,
-                                            fillOpacity: 0.6
+                                            fillOpacity: 0.3
                                         }
                                         : {
                                             fillColor: '#e0e0e0',
@@ -260,6 +261,9 @@ document.addEventListener("DOMContentLoaded", () => {
                                     });
                                 }
                             }).addTo(map);
+
+                            // 中国全体にズーム
+                            map.fitBounds(chinaLayer.getBounds());
                         })
                         .catch(err => {
                             console.error('中国地図のGeoJSON読込に失敗しました:', err);
