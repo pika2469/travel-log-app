@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 国コード変換マップの読み込み
   await loadCountryCodeMap();
 
-  const form = document.getElementById("travel-form");
+  const form = document.getElementById("register-form");
   const list = document.getElementById("log-list");
 
   // ブラウザのlocalStorageに保存されているデータを表示
@@ -65,43 +65,75 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadLogs();
   });
 
-
+  // ----------------------------------------------------------
+  // ログを画面に描画
+  // ----------------------------------------------------------
   function loadLogs() {
     const logs = JSON.parse(localStorage.getItem("travelLogs") || "[]");
     
     // 日付の新しい順に並び替え
     logs.sort((a, b) => new Date(b.date) - new Date(a.date));
     
+    // リストを初期化
     list.innerHTML = "";
+
+    // 保存ボタンとリストの間に余白を入れる
+    const spacer = document.createElement("div");
+    spacer.className = "h-6";
+    list.appendChild(spacer);
+
 
     logs.forEach((log) => {
       const div = document.createElement("div");
-      div.className = "log-card";
-
-      div.innerHTML = `
-        <h3>${log.title} (${log.date})</h3>
-        <p><strong>場所:</strong> ${log.location}</p>
-        <p>${log.memo}</p>
-        <p><strong>国:</strong>${log.country}</p>
-        <button class="delete-btn" data-id="${log.id}">削除</button>
+      div.className = `
+        bg-white/10 backdrop-blur rounded-xl p-4 flex flex-col gap-2
+        shadow border border-white/20 text-white/80
       `;
 
-      // 削除ボタンのイベント
-      div.querySelector(".delete-btn").addEventListener("click", () => {
+      // タイトルと日付
+      const titleRow = document.createElement("div");
+      titleRow.className = "flex justify-between items-center";
+      titleRow.innerHTML = `
+        <h3 class="text-white font-semibold text-base">${log.title}</h3>
+        <span class="text-sm text-white/60">${log.date}</span>
+      `;
+
+      // 場所
+      const locationRow = document.createElement("div");
+      locationRow.className = "text-sm text-white/70";
+      locationRow.innerHTML = `<strong>場所：</strong> ${log.location}`;
+
+      // メモ
+      const memoRow = document.createElement("div");
+      memoRow.className = "text-sm text-white/60";
+      memoRow.textContent = log.memo ? log.memo : "No data";
+
+      // 削除ボタン
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "削除";
+      deleteBtn.className = `
+        mt-2 self-end bg-red-500 hover:bg-red-600 text-white text-xs
+        rounded px-3 py-1 transition shadow
+      `;
+      deleteBtn.addEventListener("click", () => {
+        if (!confirm("本当にこの記録を削除しますか？")) {
+          return;
+        }
 
         // キャッシュから削除
         const cache = JSON.parse(localStorage.getItem("locationCache") || "{}");
         delete cache[log.location];
         localStorage.setItem("locationCache", JSON.stringify(cache));
 
-        const idToDelete = log.id;
-        const newLogs = logs.filter(l => l.id !== idToDelete);
-
+        const newLogs = logs.filter(l => l.id !== log.id);
         localStorage.setItem("travelLogs", JSON.stringify(newLogs));
         loadLogs();
-
       });
 
+      div.appendChild(titleRow);
+      div.appendChild(locationRow);
+      div.appendChild(memoRow);
+      div.appendChild(deleteBtn);
       list.appendChild(div);
     });
   }
