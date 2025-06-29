@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const form = document.getElementById("register-form");
   const list = document.getElementById("log-list");
+  const modalRoot = document.getElementById("modal-root");
 
   // ブラウザのlocalStorageに保存されているデータを表示
   loadLogs();
@@ -43,7 +44,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 記録の作成(フォーム送信データ + Nominatim APIで取得した国名)
     const newLog = {
-
       id: Date.now(),　// 現在時刻を使って一意なIDを作成
       date: formData.get("date"),
       title: formData.get("title"),
@@ -77,6 +77,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // リストを初期化
     list.innerHTML = "";
 
+    // リストのスタイル
+    list.className = "flex flex-col gap-2";
+
     // 保存ボタンとリストの間に余白を入れる
     const spacer = document.createElement("div");
     spacer.className = "h-6";
@@ -84,8 +87,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     logs.forEach((log) => {
-      const div = document.createElement("div");
-      div.className = `
+      const card = document.createElement("div");
+      card.className = `
         bg-white/10 backdrop-blur rounded-xl p-4 flex flex-col gap-2
         shadow border border-white/20 text-white/80
       `;
@@ -93,10 +96,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       // タイトルと日付
       const titleRow = document.createElement("div");
       titleRow.className = "flex justify-between items-center";
-      titleRow.innerHTML = `
-        <h3 class="text-white font-semibold text-base">${log.title}</h3>
-        <span class="text-sm text-white/60">${log.date}</span>
-      `;
+
+      const titleE1 = document.createElement("h3");
+      titleE1.className = "text-white font-semibold text-base";
+      titleE1.textContent = log.title;
+
+      const dateE1 = document.createElement("span");
+      dateE1.className = "text-sm text-white/60";
+      dateE1.textContent = log.date;
+
+      titleRow.appendChild(titleE1);
+      titleRow.appendChild(dateE1);
+
 
       // 場所
       const locationRow = document.createElement("div");
@@ -108,39 +119,184 @@ document.addEventListener("DOMContentLoaded", async () => {
       memoRow.className = "text-sm text-white/60";
       memoRow.textContent = log.memo ? log.memo : "No data";
 
+      // ボタン行
+      const buttonRow = document.createElement("div");
+      buttonRow.className = "flex gap-2 mt-2";
+      
+      // 編集ボタン
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "編集";
+      editBtn.className = "bg-blue-600 hover:bg-blue-500 text-white rounded px-3 py-1 text-sm transition";
+      editBtn.addEventListener("click", () => showEditModal(log));
+
       // 削除ボタン
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "削除";
-      deleteBtn.className = `
-        mt-2 self-end bg-red-500 hover:bg-red-600 text-white text-xs
-        rounded px-3 py-1 transition shadow
-      `;
-      deleteBtn.addEventListener("click", () => {
-        if (!confirm("本当にこの記録を削除しますか？")) {
-          return;
-        }
+      deleteBtn.className = "bg-red-600 hover:bg-red-500 text-white rounded px-3 py-1 text-sm transition";
+      deleteBtn.addEventListener("click", () => handleDelete(log.id, log.location));
 
-        // キャッシュから削除
-        const cache = JSON.parse(localStorage.getItem("locationCache") || "{}");
-        delete cache[log.location];
-        localStorage.setItem("locationCache", JSON.stringify(cache));
+      buttonRow.appendChild(editBtn);
+      buttonRow.appendChild(deleteBtn);
 
-        const newLogs = logs.filter(l => l.id !== log.id);
-        localStorage.setItem("travelLogs", JSON.stringify(newLogs));
-        loadLogs();
-      });
-
-      div.appendChild(titleRow);
-      div.appendChild(locationRow);
-      div.appendChild(memoRow);
-      div.appendChild(deleteBtn);
-      list.appendChild(div);
+      card.appendChild(titleRow);
+      card.appendChild(locationRow);
+      card.appendChild(memoRow);
+      card.appendChild(buttonRow);
+      list.appendChild(card);
     });
+  }
+
+  function handleDelete(id, location, skipConfirm = false) {
+    if (!skipConfirm && !confirm("本当にこの記録を削除しますか？")) return;
+
+      // キャッシュから削除
+      const cache = JSON.parse(localStorage.getItem("locationCache") || "{}");
+      delete cache[location];
+      localStorage.setItem("locationCache", JSON.stringify(cache));
+
+      const logs = getLogs().filter(l => l.id !== id);
+      saveLogs(logs);
+      loadLogs();
+  }
+
+  // ----------------------------------------------------------
+  // 編集モーダル
+  // ----------------------------------------------------------
+  function showEditModal(log) {
+    modalRoot.innerHTML = "";
+
+    const overlay = document.createElement("div");
+    overlay.className = "fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50";
+
+    // 画面外クリックで閉じる処理
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        closeModal();
+      }
+    });
+
+    const modal = document.createElement("div");
+    modal.className = "bg-[#1f1f1f] rounded-xl p-6 max-w-sm w-full shadow-lg relative";
+
+    const title = document.createElement("h2");
+    title.className = "text-lg font-bold mb-4 text-white/90";
+    title.textContent = "記録を編集";
+
+    const form = document.createElement("form");
+    form.className = "flex flex-col gap-3";
+
+    // フォームの中身
+    // date
+    const dateInput = document.createElement("input");
+    dateInput.type = "date";
+    dateInput.name = "date";
+    dateInput.value = log.date;
+    dateInput.required = true;
+    dateInput.className = "bg-white/10 backdrop-blur rounded-lg px-4 py-2 text-white/80 focus:ring focus:ring-blue-600 transition";
+
+    // title
+    const titleInput = document.createElement("input");
+    titleInput.type = "text";
+    titleInput.name = "title";
+    titleInput.value = log.title;
+    titleInput.required = true;
+    titleInput.className = dateInput.className;
+    
+    // location
+    const locInput = document.createElement("input");
+    locInput.type = "text";
+    locInput.name = "location";
+    locInput.value = log.location;
+    locInput.required = true;
+    locInput.className = dateInput.className;
+
+    // memo
+    const memoInput = document.createElement("textarea");
+    memoInput.name = "memo";
+    memoInput.rows = 3;
+    memoInput.textContent = log.memo || "";
+    memoInput.className = dateInput.className;
+
+    // ボタン行
+    const buttonRow = document.createElement("div");
+    buttonRow.className = "flex justify-end gap-2 mt-3";
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "削除";
+    deleteBtn.className = "bg-red-600 hover:bg-red-500 text-white rounded px-4 py-2 text-sm transition";
+    deleteBtn.addEventListener("click", () => {
+      if (confirm("本当に削除しますか？")) {
+        handleDelete(log.id, log.location, true);
+        closeModal();
+      }
+    });
+
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "submit";
+    saveBtn.textContent = "保存";
+    saveBtn.className = "bg-blue-600 hover:bg-blue-500 text-white rounded px-4 py-2 text-sm transition";
+
+    buttonRow.appendChild(saveBtn);
+    buttonRow.appendChild(deleteBtn);
+
+    form.appendChild(dateInput);
+    form.appendChild(titleInput);
+    form.appendChild(locInput);
+    form.appendChild(memoInput);
+    form.appendChild(buttonRow);
+
+    // 保存ボタンを押した際の処理
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const updateLog = {
+        ...log,
+        date: dateInput.value,
+        title: titleInput.value,
+        location: locInput.value,
+        memo: memoInput.value,
+      };
+
+      const logs = getLogs().map(l => l.id === log.id ? updateLog : l);
+      saveLogs(logs);
+      closeModal();
+      loadLogs();
+    });
+
+    const closeBtn = document.createElement("button");
+    closeBtn.id = "close-modal";
+    closeBtn.className = "absolute top-2 right-2 text-white/50 hover:text-white text-xl";
+    closeBtn.innerHTML = "&times;";
+    closeBtn.addEventListener("click", closeModal);
+
+    modal.appendChild(title);
+    modal.appendChild(form);
+    modal.appendChild(closeBtn);
+    overlay.appendChild(modal);
+
+    modalRoot.appendChild(overlay);
+
+  }
+
+  function closeModal() {
+    modalRoot.innerHTML = "";
+  }
+
+  // -------------------------------------------------------
+  // localStorage utils
+  // -------------------------------------------------------
+  function getLogs() {
+    return JSON.parse(localStorage.getItem("travelLogs") || "[]");
+  }
+
+  function saveLogs(logs) {
+    localStorage.setItem("travelLogs", JSON.stringify(logs));
   }
 
 });
 
-// 国コードマップの保持
+// ----------------------------------------------------------
+// 国コード変換
+// ----------------------------------------------------------
 let countryCodeMap = {};
 
 // codes.jsonを読み込み、変換用マップを構築
