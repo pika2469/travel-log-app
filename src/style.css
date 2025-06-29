@@ -10,3 +10,7 @@
 .mode-button.active {
     @apply bg-blue-500/80 text-white font-bold;
 }
+
+.leaflet-dark-bg {
+    background-color: #262626;
+}

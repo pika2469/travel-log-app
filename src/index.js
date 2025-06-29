@@ -56,6 +56,7 @@ function initializeCityProvinceMapping() {
 function resetMap(map) {
     map.eachLayer(layer => map.removeLayer(layer));
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    className: 'leaflet-dark-bg',
     attribution: '© OpenStreetMap contributors, © CARTO'
   }).addTo(map);
 }
