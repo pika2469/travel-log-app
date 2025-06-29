@@ -2,27 +2,61 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
-        <title>地図表示</title>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-        <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script> -->
-        <script type="module" src="./src/index.js" defer></script>
+        <title>旅行ログマップ</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <!-- iOS用フルスクリーン対応 -->
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="apple-touch-icon" href="/travel-log-app/icon.png" />
+
+        <!-- Leaflet -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
+        <!-- App -->
+        <script type="module" src="./src/index.js" defer></script>
     </head>
 
     <body class="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white relative font-sans"></body>    
 
-        <!-- ヘッダー -->
-        <!-- <header class="text-center py-4 text-xl font-bold tracking-wide">
-            🌎マップ
-        </header> -->
+        <div class="relative px-4 pb-20">
+
+            <!-- 地図本体 -->
+            <div id="map" class="w-full h-[600px] rounded-x1 shadow-lg relative z-0"></div>
+
+            <!-- トグルスイッチ風モードボタン -->
+            <div class="absolute top-4 left-20 z-10 flex bacldrop-blur-md bg-white/10 rounded-full overflow-hidden shadow-lg border border-white/20">
+                <button 
+                    data-mode="world" 
+                    class="mode-button px-4 py-2 text-sm transition-all"
+                >
+                    世界
+                </button>
+                <button
+                    data-mode="china"
+                    class="mode-button px-4 py-2 text-sm transition-all"
+                >
+                    中国
+                </button>
+            </div>
+
+            <!-- フローティング追加ボタン -->
+            <div class="absolute bottom-[110px] right-6 z-10 flex flex-col items-center">
+                <a
+                    href="register.html"
+                    class="bg-blue-500 text-white p-4 rounded-full shadow-xl hover:bg-blue-600 transition z-10"
+                    aria-label="記録を追加"
+                >
+                    +
+                </a>
+                <p class="mt-l text-xs text-black drop-shadow-sm">記録を追加</p>
+            </div>
+        </div>
+
 
         <!-- 表示モード切替ボタン -->
-        <div class="flex justify-center gap-4 py-3">
+        <!-- <div class="flex justify-center gap-4 py-3">
             <button 
                 data-mode="world"
                 class="flex items-center gap-2 bg-white/10 hover:bg-blue-600/30 backdrop-blur text-white rounded-xl px-5 py-2 text-sm shadow transition-all"
@@ -41,14 +75,14 @@
             >
                 日本
             </button>
-        </div>
+        </div> -->
 
         <!-- 地図エリア -->
-        <div class="relative px-4 pb-20">
-            <div id="map" class="w-full h-[600px] rounded-xl shadow-lg relative z-0"></div>
+        <!-- <div class="relative px-4 pb-20">
+            <div id="map" class="w-full h-[600px] rounded-xl shadow-lg relative z-0"></div> -->
 
             <!-- フローティング追加ボタン -->
-            <div class="absolute bottom-[110px] right-6 z-10 flex flex-col items-center">
+            <!-- <div class="absolute bottom-[110px] right-6 z-10 flex flex-col items-center">
                 <a
                     href="register.html"
                     class="bg-blue-500 text-white p-4 rounded-full shadow-xl hover:bg-blue-600 transition z-10"
@@ -59,7 +93,9 @@
                 <p class="mt-l text-xs text-black drop-shadow-sm">記録を追加</p>
             </div>
            
-        </div>
+        </div> -->
         
-       <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+       
     </body>
+
+</html>
