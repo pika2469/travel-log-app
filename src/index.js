@@ -87,11 +87,11 @@ function renderWorldMode(map, visitedCountryCodes, worldGeojson) {
 
             if (visitedCountryCodes.includes(countryCode)){
                 return{
-                    fillColor: '#4a90e2',
-                    stroke: false,
-                    // color: 'transparent',
-                    // weight: 0,
-                    fillOpacity: 0.6
+                    fillColor: '#a7d8ff',
+                    color: '#5eaada',
+                    weight: 1,
+                    // stroke: false,
+                    fillOpacity: 0.3
                 };
             } else {
                 return{
@@ -126,7 +126,10 @@ function renderWorldMode(map, visitedCountryCodes, worldGeojson) {
 // -----------------------------------------------------
 // 中国モード描画
 // -----------------------------------------------------
-function renderChinaMode(map) {
+function renderChinaMode(map, worldGeojson, chinaGeojson) {
+
+    // まず地図を黒色にマスキング
+    addWorldBlackMask(map, worldGeojson)
 
     // キャッシュデータ読込
     const logs = JSON.parse(localStorage.getItem("travelLogs") || "[]");
@@ -154,6 +157,40 @@ function renderChinaMode(map) {
         }
     });
     
+    // 省レイヤー
+    const chinaLayer = L.geoJSON(chinaGeojson, {
+        style: feature => {
+            const provinceNameEn = feature.properties.name;
+            return visitedProvinces.has(provinceNameEn)
+                ? {
+                    fillColor: '#a7d8ff',
+                    color: '#5eaada',
+                    weight: 1,
+                    fillOpacity: 0.3
+                }
+                : {
+                    fillColor: '#222',
+                    color: '#333',
+                    weight: 0.5,
+                    fillOpacity: 0.2
+                };
+        },
+        onEachFeature: (feature, layer) => {
+            layer.on('click', (e) => {
+                const provinceEn = feature.properties.name;
+                const matchingLogs = logs.filter(log => {
+                    const city = log.location.split("、")[0];
+                    const info = cityMap[city];
+                    return info && info.province_en === provinceEn;
+                });
+                createInfoPanel(e.originalEvent, matchingLogs);
+            });
+        }
+    }).addTo(map);
+    
+    // fitBoundsで中国全体を表示
+    map.fitBounds(chinaLayer.getBounds());
+
     // ピンを一括描画
     pinQueue.forEach(({lat, lon, city, province_zh}) => {
         L.circleMarker([lat, lon], {
@@ -165,53 +202,6 @@ function renderChinaMode(map) {
             fillOpacity: 0.9
         }).addTo(map).bindPopup(`<strong>${city}</strong><br>${province_zh}`);
     });
-
-    // 省の色塗り
-    const basePath = import.meta.env.BASE_URL.endsWith('/')
-    ? import.meta.env.BASE_URL
-    : import.meta.env.BASE_URL + '/';
-
-    fetch(`${basePath}china-province.geojson`)
-        .then(res => res.json())
-        .then(geojson => {
-            // L.geoJSONレイヤー生成
-            const chinaLayer = L.geoJSON(geojson, {
-                style: feature => {
-                    const provinceNameEn = feature.properties.name;
-                    return visitedProvinces.has(provinceNameEn)
-                        ? {
-                            fillColor: '#a7d8ff',
-                            color: '#5eaada',
-                            weight: 1,
-                            fillOpacity: 0.3
-                        }
-                        : {
-                            fillColor: '#e0e0e0',
-                            color: '#cccccc',
-                            weight: 0.5,
-                            fillOpacity: 0.2
-                        };
-                },
-                onEachFeature: (feature, layer) => {
-                    layer.on('click', (e) => {
-                        const provinceEn = feature.properties.name;
-                        const matchingLogs = logs.filter(log => {
-                            const city = log.location.split("、")[0];
-                            const info = cityMap[city];
-                            return info && info.province_en === provinceEn;
-                        });
-
-                        createInfoPanel(e.originalEvent, matchingLogs);
-                    });
-                }
-            }).addTo(map);
-            map.fitBounds(chinaLayer.getBounds());
-        })
-        .catch(err => {
-            console.error('中国地図のGeoJSON読込に失敗しました:', err);
-        });
-
-        console.log("中国地図がtravelLogsに基いてGeoJSONで描画されました");
 }
 
 
@@ -393,9 +383,10 @@ document.addEventListener("DOMContentLoaded", async() => {
                 
                 // 中国表示
                 case 'china':
-                    map.setView([35.9, 104.1], 5);
-                    resetMap(map);
-                    renderChinaMode(map);
+                    renderChinaMode(map, worldGeojson, chinaGeojson)
+                    // map.setView([35.9, 104.1], 5);
+                    // resetMap(map);
+                    // renderChinaMode(map);
                     break;
                 
                 // 日本表示

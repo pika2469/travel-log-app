@@ -16,9 +16,22 @@
 
         <!-- App -->
         <script type="module" src="./src/index.js" defer></script>
+
+        <!-- カスタムスタイル -->
+        <style>
+            .leaflet-control-attribution {
+                background: rgba(0, 0, 0, 0.4) !important;
+                color: #aaa !important;
+                padding: 2px 6px !important;
+                border-radius: 6px !important;
+                box-shadow: none !important;
+            }
+        </style>
+
     </head>
 
-    <body class="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white relative font-sans"></body>    
+    <!-- <body class="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white relative font-sans"></body>     -->
+    <body class="min-h-screen bg-[#262626] text-white relative font-sans"></body>    
 
         <div class="relative px-4 pb-20">
 
@@ -26,16 +39,16 @@
             <div id="map" class="w-full h-[600px] rounded-x1 shadow-lg relative z-0"></div>
 
             <!-- トグルスイッチ風モードボタン -->
-            <div class="absolute top-4 left-20 z-10 flex bacldrop-blur-md bg-white/10 rounded-full overflow-hidden shadow-lg border border-white/20">
+            <div class="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex bacldrop-blur-md bg-white/10 rounded-full overflow-hidden shadow-lg border border-white/20">
                 <button 
                     data-mode="world" 
-                    class="mode-button px-4 py-2 text-sm transition-all"
+                    class="mode-button px-4 py-2 text-sm transition-all hover:bg-blue-500/30"
                 >
                     世界
                 </button>
                 <button
                     data-mode="china"
-                    class="mode-button px-4 py-2 text-sm transition-all"
+                    class="mode-button px-4 py-2 text-sm transition-all hover:bg-blue-500/30"
                 >
                     中国
                 </button>
@@ -45,12 +58,12 @@
             <div class="absolute bottom-[110px] right-6 z-10 flex flex-col items-center">
                 <a
                     href="register.html"
-                    class="bg-blue-500 text-white p-4 rounded-full shadow-xl hover:bg-blue-600 transition z-10"
+                    class="bg-blue-700 text-white rounded-xl w-12 h-12 flex items-center justify-center shadow-lg transition-all"
                     aria-label="記録を追加"
                 >
                     +
                 </a>
-                <p class="mt-l text-xs text-black drop-shadow-sm">記録を追加</p>
+                <p class="mt-1 text-xs text-white/80 bg-white/10 rounded px-2 py-0.5 drop-shadow-sm">記録を追加</p>
             </div>
         </div>
 
