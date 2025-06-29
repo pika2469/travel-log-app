@@ -72,48 +72,58 @@ function createInfoPanel(event, logs) {
     // 記録が1件もない場合はポップアップを生成しない
     if (logs.length === 0) return;
 
+    // 新しいポップアップを作成
     popup = document.createElement('div');
     popup.id = 'info-popup';
     popup.style.position = 'absolute';
-    popup.style.backgroundColor = 'rgba(0,0,0,0.85)';
-    popup.style.border = '1px solid #444';
+    popup.style.backgroundColor = 'rgba(15,15,20,0.6)';
+    popup.style.border = '1px solid rgba(255, 255, 255, 0.2)';
     popup.style.color = 'white';
-    popup.style.borderRadius = '8px';
+    popup.style.borderRadius = '12px';
     popup.style.padding = '10px';
-    popup.style.MaxWidth = '90%';
+    popup.style.MaxWidth = '300px';
     popup.style.maxHeight = '300px';
     popup.style.overflowY = 'auto';
-    // popup.style.whiteSpace = 'nowrap';
     popup.style.display = 'flex';
     popup.style.flexDirection = 'column';
     popup.style.gap = '10px';
-    // popup.style.overflowY = 'auto';
+    popup.style.backdropFilter = 'blur(8px)';
     popup.style.zIndex = 1000;
+    popup.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)'
+    popup.style.fontSize = '0.8rem';0
+
     document.body.appendChild(popup);
 
-    const {x, y} = event;
-    popup.style.left = `${x}px`;
-    popup.style.top = `${y}px`;
+    // マウスクリック位置取得
+    // const {x, y} = event;
+    // popup.style.left = `${x}px`;
+    // popup.style.top = `${y}px`;
 
+    // ログカード生成
     logs.forEach(log => {
     const card = document.createElement('div');
     card.className = 'log-card';
-    card.style.backgorundColor = '#4a90e2';
+    card.style.backgorundColor = 'rgba(255, 255, 255, 0.05)';
     card.style.color = 'white';
-    card.style.padding = '10px';
-    card.style.borderRadius = '6px';
-
+    card.style.padding = '8px';
+    card.style.borderRadius = '8px';
+    card.style.border = '1px solid rgba(255,255,255,0.1)';
+    card.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+    
+    // 内容行
     const contentRow = document.createElement('div');
     contentRow.style.display = 'flex';
-    contentRow.style.gap = '10px';
+    contentRow.style.gap = '8px';
+    contentRow.style.flexWrap = 'wrap';
     contentRow.style.alignItems = 'center';
+    // contentRow.style.fontSize = '0.9rem';
+    contentRow.style.lineHeight = '1.4';
 
-    // const titleSpan = document.createElement('span');
-    // titleSpan.innerHTML = `<strong>${log.title}</strong>`;
-
+    // 日付
     const dateSpan = document.createElement('span');
     dateSpan.textContent = log.date;
 
+    // 都市名
     const citySpan = document.createElement('span');
     citySpan.textContent = log.location.split('、')[0];
 
@@ -123,6 +133,26 @@ function createInfoPanel(event, logs) {
     card.appendChild(contentRow);
     popup.appendChild(card);
     })
+
+    // ----------画面端調整-------------
+    const padding = 10;
+    const { innerWidth, innerHeight } = window;
+    const popupRect = popup.getBoundingClientRect();
+    let left = event.x;
+    let top = event.y;
+
+    if ((left + popupRect.width + padding) > innerWidth) {
+        left = innerWidth - popupRect.width - padding; 
+    }
+    if ((top + popupRect.height + padding) > innerHeight) {
+        top = innerHeight - popupRect.height - padding;
+    }
+    if (left < padding) left = padding;
+    if (top < padding) top = padding;
+
+    popup.style.left = `${left}px`;
+    popup.style.top = `${top}px`;
+
 
     // 他クリックでパネル非表示
     setTimeout(() => {
