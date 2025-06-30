@@ -26,35 +26,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const location = formData.get("location");
     const memo = formData.get("memo");
 
-    // 地名データ処理
-    const primaryCity = location.split(/[、,]/)[0].trim();
-
-    // cityProvinceLocationMappingと比較して、都市データが存在するか確認
-    const cityMapStr = localStorage.getItem('cityProvinceLocationMapping') || "{}";
-    const cityMap = JSON.parse(cityMapStr);
-    const info = cityMap[primaryCity];
-
-    let province_zh = null;
-    let province_en = null;
-    let lat = null;
-    let lon = null;
-
-    // 地名がデータベースにある場合
-    if (info) {
-      province_zh = info.province_zh;
-      province_en = info.province_en;
-      lat = info.lat;
-      lon = info.lon;
-    } else {
-      const proceed = confirm(
-        "この都市はデータベースに存在しません。マッピングはできませんが、記録は続けますか？"
-      );
-      if (!proceed) {
-        return;
-      }
-    }
-
-
     // Nominatim APIによる国名取得と3桁コードへの変換
     let country = "UNK";
     try {
@@ -73,6 +44,40 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error("国コードの取得に失敗しました", err);
       return;
     }
+
+
+    // 初期化
+    let province_zh = null;
+    let province_en = null;
+    let lat = null;
+    let lon = null;
+
+    if (country === "CHN") {
+      // 地名データ処理
+      const primaryCity = location.split(/[、,]/)[0].trim();
+
+      // cityProvinceLocationMappingと比較して、都市データが存在するか確認
+      const cityMapStr = localStorage.getItem('cityProvinceLocationMapping') || "{}";
+      const cityMap = JSON.parse(cityMapStr);
+      const info = cityMap[primaryCity];
+
+      // 地名がデータベースにある場合
+      if (info) {
+        province_zh = info.province_zh;
+        province_en = info.province_en;
+        lat = info.lat;
+        lon = info.lon;
+      } else {
+        const proceed = confirm(
+          "この都市はデータベースに存在しません。マッピングはできませんが、記録は続けますか？"
+        );
+        if (!proceed) {
+          return;
+        }
+      } 
+
+    }
+    
 
     // 記録の作成(フォーム送信データ + Nominatim APIで取得した国名)
     const newLog = {
@@ -297,22 +302,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       let updatedLat = log.lat;
       let updatedLon = log.lon;
 
+      // locationが変更された場合
       if (newLocation !== log.location) {
-        // locationが変更された場合は、cityProvinceLocationMappingを参照
-        const newPrimaryCity = newLocation.split(/[、,]/)[0].trim();
+        if (log.country === "CHN") {
+          // 中国の場合のみ、cityProvinceLocationMappingを参照
+          const newPrimaryCity = newLocation.split(/[、,]/)[0].trim();
 
-        const cityMapStr = localStorage.getItem('cityProvinceLocationMapping') || "{}";
-        const cityMap = JSON.parse(cityMapStr);
-        const info = cityMap[newPrimaryCity];
+          const cityMapStr = localStorage.getItem('cityProvinceLocationMapping') || "{}";
+          const cityMap = JSON.parse(cityMapStr);
+          const info = cityMap[newPrimaryCity];
 
-        if (info) {
-          updatedProvinceZh = info.province_zh;
-          updatedProvinceEn = info.province_en;
-          updatedLat = info.lat;
-          updatedLon = info.lon;
+          if (info) {
+            updatedProvinceZh = info.province_zh;
+            updatedProvinceEn = info.province_en;
+            updatedLat = info.lat;
+            updatedLon = info.lon;
+          } else {
+            alert("指定した都市がデータベースにありません。csvを更新してください。");
+            return;
+          }          
         } else {
-          alert("指定した都市がデータベースにありません。csvを更新してください。");
-          return;
+          // 中国以外の場合は、単純に地名を変更して終わり
+          updatedProvinceZh = log.province_zh;
+          updatedProvinceEn = log.province_en;
+          updatedLat = log.lat;
+          updatedLon = log.lon;
         }
       }
 
