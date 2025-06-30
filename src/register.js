@@ -19,9 +19,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     // フォームのデフォルト動作（ページ再読み込み）を止める
     e.preventDefault();
 
-    // 要素の取得を容易にするためにFormDataオブジェクトを作成
+    // FormData取得
     const formData = new FormData(form);
+    const date = formData.get("date");
+    const title = formData.get("title");
     const location = formData.get("location");
+    const memo = formData.get("memo");
+
+    // 地名データ処理
+    const primaryCity = location.split(/[、,]/)[0].trim();
+
+    // cityProvinceLocationMappingと比較して、都市データが存在するか確認
+    const cityMapStr = localStorage.getItem('cityProvinceLocationMapping') || "{}";
+    const cityMap = JSON.parse(cityMapStr);
+    const info = cityMap[primaryCity];
+
+    let province_zh = null;
+    let province_en = null;
+    let lat = null;
+    let lon = null;
+
+    // 地名がデータベースにある場合
+    if (info) {
+      province_zh = info.province_zh;
+      province_en = info.province_en;
+      lat = info.lat;
+      lon = info.lon;
+    } else {
+      const proceed = confirm(
+        "この都市はデータベースに存在しません。マッピングはできませんが、記録は続けますか？"
+      );
+      if (!proceed) {
+        return;
+      }
+    }
+
 
     // Nominatim APIによる国名取得と3桁コードへの変換
     let country = "UNK";
@@ -45,11 +77,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 記録の作成(フォーム送信データ + Nominatim APIで取得した国名)
     const newLog = {
       id: Date.now(),　// 現在時刻を使って一意なIDを作成
-      date: formData.get("date"),
-      title: formData.get("title"),
+      date,
+      title,
       location,
-      memo: formData.get("memo"),
+      memo,
       country,
+      province_zh,
+      province_en,
+      lat,
+      lon
     };
 
     // localStorageに保存されているデータを配列として取り出す
@@ -248,14 +284,51 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 保存ボタンを押した際の処理
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+
+      // 入力値取得
+      const newDate = dateInput.value;
+      const newTitle = titleInput.value;
+      const newLocation = locInput.value;
+      const newMemo = memoInput.value;
+
+      // 元々のlocationと比較
+      let updatedProvinceZh = log.province_zh;
+      let updatedProvinceEn = log.province_en;
+      let updatedLat = log.lat;
+      let updatedLon = log.lon;
+
+      if (newLocation !== log.location) {
+        // locationが変更された場合は、cityProvinceLocationMappingを参照
+        const newPrimaryCity = newLocation.split(/[、,]/)[0].trim();
+
+        const cityMapStr = localStorage.getItem('cityProvinceLocationMapping') || "{}";
+        const cityMap = JSON.parse(cityMapStr);
+        const info = cityMap[newPrimaryCity];
+
+        if (info) {
+          updatedProvinceZh = info.province_zh;
+          updatedProvinceEn = info.province_en;
+          updatedLat = info.lat;
+          updatedLon = info.lon;
+        } else {
+          alert("指定した都市がデータベースにありません。csvを更新してください。");
+          return;
+        }
+      }
+
       const updateLog = {
         ...log,
-        date: dateInput.value,
-        title: titleInput.value,
-        location: locInput.value,
-        memo: memoInput.value,
+        date: newDate,
+        title: newTitle,
+        location: newLocation,
+        memo: newMemo,
+        province_zh: updatedProvinceZh,
+        province_en: updatedProvinceEn,
+        lat: updatedLat,
+        lon: updatedLon,
       };
 
+      // 保存
       const logs = getLogs().map(l => l.id === log.id ? updateLog : l);
       saveLogs(logs);
       closeModal();

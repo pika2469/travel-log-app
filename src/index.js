@@ -4,10 +4,12 @@ import './style.css';
 //  初期化処理：都市・省のキャッシュ
 // -----------------------------------------------------
 function initializeCityProvinceMapping() {
-    if (localStorage.getItem('cityProvinceLocationMapping')) {
-        console.log("キャッシュはすでに存在しています");
-        return;
-    }
+    // if (localStorage.getItem('cityProvinceLocationMapping')) {
+    //     console.log("キャッシュはすでに存在しています");
+    //     return;
+    // }
+
+    localStorage.removeItem('cityProvinceLocationMapping')
 
     // キャッシュが存在しない場合はcsvファイルから都市と省のデータを読み込む
     const basePath = import.meta.env.BASE_URL.endsWith('/')
@@ -17,7 +19,11 @@ function initializeCityProvinceMapping() {
         .then(response => response.text())
         .then(csvText => {
             const cityProvinceLocationMapping = {};
-            const lines = csvText.split("\n");
+            const lines = csvText
+                .split("\n")
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+
             const headers = lines[0].split(",").map(h => h.trim());
 
             for (let i = 1; i < lines.length; i++) {
@@ -425,7 +431,7 @@ document.addEventListener("DOMContentLoaded", async() => {
         // キャッシュがあれば即時返す
         const cached = getCachedLocation(location);
         if (cached) {
-            console.log(`キャッシュヒット: ${location}`);
+            // console.log(`キャッシュヒット: ${location}`);
             return Promise.resolve({lat: cached.lat, lon: cached.lon, log});
         }
 
